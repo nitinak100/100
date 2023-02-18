@@ -1,0 +1,58 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login Form</title>
+</head>
+<body>
+	<h1>Login Form</h1>
+	<form method="post" action="login.php">
+		<label for="email">Email:</label>
+		<input type="email" name="email" id="email" required>
+		<br><br>
+		<label for="password">Password:</label>
+		<input type="password" name="password" id="password" required>
+		<br><br>
+		<input type="submit" name="submit" value="Login">
+	</form>
+</body>
+</html>
+
+------
+
+<!-- login.php -->
+<?php
+
+session_start();
+
+if (isset($_POST['submit'])) {
+	$email = $_POST['email'];
+	$password = $_POST['password'];
+
+	// Perform input sanitization and validation as needed here
+
+	// Assuming $conn is a valid MySQL database connection object
+	$sql = "SELECT * FROM user_info WHERE email = '$email' AND password = '$password'";
+	$result = mysqli_query($conn, $sql);
+
+	if (mysqli_num_rows($result) == 1) {
+		// Login is valid, set session variables as needed
+		$row = mysqli_fetch_assoc($result);
+		$_SESSION['uid'] = $row['user_id'];
+		$_SESSION['uname'] = $row['name'];
+		// ...
+		
+		// Redirect to profile page
+		header('Location: profile.php');
+		exit;
+	} else {
+		// Login failed, redirect back to login form
+		header('Location: login.html');
+		exit;
+	}
+} else {
+	// Submit button was not clicked, redirect back to login form
+	header('Location: login.html');
+	exit;
+}
+?>
